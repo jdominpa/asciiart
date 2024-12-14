@@ -1,0 +1,18 @@
+# Language: Cpp
+# AlignConsecutiveMacros: Consecutive
+# AlignEscapedNewlines: ENAS_LeftWithLastLine
+# AllowShortIfStatementsOnASingleLine: WithoutElse
+# AllowShortLoopsOnASingleLine: true
+# BreakBeforeBraces: Custom
+# BraceWrapping:
+#     AfterEnum: false
+#     AfterUnion: false
+#     AfterStruct: false
+#     AfterCase: false
+#     AfterFunction: true
+# PointerAlignment: Right
+# ReferenceAlignment: Right
+# QualifierAlignment: Left
+# IndentWidth: 4
+
+DisableFormat: true
