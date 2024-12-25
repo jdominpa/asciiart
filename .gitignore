@@ -1,5 +1,6 @@
 .direnv
 .envrc
+.gdb_history
 flake.nix
 flake.lock
 build/
