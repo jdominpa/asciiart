@@ -4,7 +4,7 @@ Convert any image to ASCII. Inspired by [Acerola's
 video](https://youtu.be/gg40RWiaHRY?si=BXRhRr5xB4rvH4QU) about ASCII art
 shaders.
 
-![cat_output](examples/cat_output.png)
+![cat_default](examples/cat_default.png)
 
 The image above is the result of the input image
 
