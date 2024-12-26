@@ -14,7 +14,7 @@ The image above is the result of the input image
 
 ```console
 $ make
-$ ./asciiart [options] <input_img> <output.png>
+$ ./asciiart [options] <input_image_path> <output_image_path>
 ```
 
 Currently the image is always saved in `png` format. Other formats may be added

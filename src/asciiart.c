@@ -72,7 +72,7 @@ Ascii_char grayvalue_to_ascii_char(uint8_t gray_value)
     return gray_value * (ASCII_CHAR_COUNT-1) / 255;
 }
 
-void convert_img_to_ascii(uint8_t *pixels, size_t w, size_t h, uint32_t comp, uint32_t color, bool use_img_colors)
+void convert_img_to_ascii(uint8_t *pixels, size_t w, size_t h, uint32_t comp, uint32_t color, bool with_img_colors)
 {
     uint8_t *downscaled_pixels = malloc(w*h*comp*sizeof(uint8_t));
     if (!downscaled_pixels) {
@@ -93,7 +93,7 @@ void convert_img_to_ascii(uint8_t *pixels, size_t w, size_t h, uint32_t comp, ui
                     if (x+x_offset < w && y+y_offset < h) {
                         size_t index = i + comp*(x_offset + w*y_offset);
                         uint8_t r, g, b, a;
-                        if (use_img_colors) {
+                        if (with_img_colors) {
                             r = pixels[index];
                             g = pixels[index+1];
                             b = pixels[index+2];
@@ -117,6 +117,15 @@ void convert_img_to_ascii(uint8_t *pixels, size_t w, size_t h, uint32_t comp, ui
     free(downscaled_pixels);
 }
 
+void print_usage(const char *program)
+{
+    fprintf(stdout, "Usage: %s [options] <input_image_path> <output_image_path>\n", program);
+    fprintf(stdout, "Options:\n");
+    fprintf(stdout, "  --help              Display this information.\n");
+    fprintf(stdout, "  --with-img-colors   Render ASCII characters with the image's original colors.\n");
+    fprintf(stdout, "  --with-color        Render ASCII characters with the specified color (in RGBA format).\n");
+}
+
 uint32_t hextou32(char *hex)
 {
     uint32_t res = 0;
@@ -138,29 +147,30 @@ int main(int argc, char **argv)
 {
     const char *program_name = shift(argv, argc);
     const uint32_t comp = 4;
+    bool with_img_colors = false;
     uint32_t color = 0xFFFFFFFF;
-    bool use_img_colors = false;
 
     while (argc > 0) {
         const char *flag = argv[0];
-        if (argc <= 0) {
-            fprintf(stderr, "ERROR: No argument provided for %s\n", flag);
-            return 1;
-        }
-
-        if (strcmp(flag, "--use-color") == 0) {
+        if (strcmp(flag, "--help") == 0) {
+            print_usage(program_name);
+            return 0;
+        } else if (strcmp(flag, "--with-img-colors") == 0) {
             shift(argv, argc); // remove flag from argv
+            with_img_colors = true;
+        } else if (strcmp(flag, "--with-color") == 0) {
+            shift(argv, argc); // remove flag from argv
+            if (argc <= 0) {
+                fprintf(stderr, "ERROR: No argument provided for '%s'\n", flag);
+                return 1;
+            }
             color = hextou32(shift(argv, argc));
-        } else if (strcmp(flag, "--use-img-colors") == 0) {
-            shift(argv, argc); // remove flag from argv
-            use_img_colors = true;
         } else {
             break;
         }
     }
 
     if (argc <= 0) {
-        fprintf(stderr, "Usage: %s [options] <input_image_path> <output_image_path>\n", program_name);
         fprintf(stderr, "ERROR: No input image provided\n");
         return 1;
     }
@@ -174,13 +184,13 @@ int main(int argc, char **argv)
     size_t width, height;
     uint8_t *pixels = stbi_load(input_path, (int *) &width, (int *) &height, NULL, comp);
     if (!pixels) {
-        fprintf(stderr, "ERROR: Could not load input image %s\n", input_path);
+        fprintf(stderr, "ERROR: Could not load input image: %s\n", input_path);
         return 1;
     }
-    convert_img_to_ascii(pixels, width, height, comp, color, use_img_colors);
+    convert_img_to_ascii(pixels, width, height, comp, color, with_img_colors);
 
     if (!stbi_write_png(output_path, width, height, comp, pixels, width*comp*sizeof(uint8_t))) {
-        fprintf(stderr, "ERROR: Could not save output image %s\n", output_path);
+        fprintf(stderr, "ERROR: Could not save output image: %s\n", output_path);
         return 1;
     }
 
